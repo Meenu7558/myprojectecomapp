@@ -19,7 +19,9 @@ try {
 };
 export const getProductDetails = async (req,res,next) =>{
     try {
-          const productList=await Product.find().populate("seller");
+        const {productId}=req.params;
+        console.log(productId);
+          const productList=await Product.findById(productId).populate("seller");
           
           res.json({data: productList ,message:"product details"});
     
@@ -84,7 +86,7 @@ export const createProduct = async (req,res,next) =>{
                 
                     const updatedProduct = await Product.findByIdAndUpdate(id, updatedData, { new: true });
             
-                    if (!updatedProduct) {
+                if (!updatedProduct) {
                         return res.status(404).json({ message: "Product not found" });
                     }
             
@@ -94,4 +96,22 @@ export const createProduct = async (req,res,next) =>{
                     return res.status(error.statusCode || 500).json({ message: error.message || "Internal server error" });
                 }
             };
+            export const deleteProduct = async (req, res) => {
+                try {
+                    const { id } = req.params;
             
+                    // Find the product by ID
+                    const product = await Product.findById(id);
+                    if (!product) {
+                        return res.status(404).json({ message: "Product not found" });
+                    }
+            
+                    // Delete the product
+                    await Product.findByIdAndDelete(id);
+            
+                    res.json({ message: "Product deleted successfully" });
+                } catch (error) {
+                    console.error("Error deleting product:", error);
+                    return res.status(500).json({ message: "Internal server error" });
+                }
+            };

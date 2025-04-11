@@ -5,6 +5,7 @@ import { sellerRouter } from "./sellerRouter.js";
 import { productRouter } from "./productRouter.js";
 import { cartRouter } from "./cartRouter.js";
 import {reviewRouter} from "./reviewRouter.js";
+import { searchRouter } from "./searchRouter.js";
 
 const router = e.Router();
 
@@ -14,6 +15,7 @@ router.use("/seller", sellerRouter);
 router.use("/product", productRouter);
 router.use("/cart", cartRouter);
 router.use("/review", reviewRouter);
+router.use("/search", searchRouter);
 
 export {router as apiRouter};
 
