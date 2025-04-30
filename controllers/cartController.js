@@ -1,6 +1,7 @@
 import {Cart} from "../models/cartModel.js";
 import {Product} from "../models/productModel.js";
 import mongoose from "mongoose";
+
 export const addToCart = async (req, res) => {
   try {
     console.log("User in Request:", req.user); 

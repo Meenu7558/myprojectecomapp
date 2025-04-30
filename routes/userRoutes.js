@@ -30,6 +30,6 @@ router.put('/change-password', userAuth, changePassword);
 router.delete('/deactivate', userAuth, deactivateAccount );
 
 // Check User (to check if user exists)
-router.get('/check-user', checkUser);
+router.get('/check-user', userAuth, checkUser);
 
 export { router as userRouter };

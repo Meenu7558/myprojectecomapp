@@ -8,7 +8,7 @@ try {
      console.log("hitted");
     const {name,email,password,phone,profilepic}=req.body;
 
-      if( !name|| !email|| !password|| !phone)
+      if( !name|| !email|| !password)
      {
         return res.status(400).json({message:"all fields are required"});
      }
@@ -26,7 +26,14 @@ try {
         await userData.save();
 
         const token = generateToken(userData._id);
-        res.cookie("token",token);
+        
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: false, // 👉 change to true in production (with HTTPS)
+          sameSite: "Lax", // or 'None' if cross-site and secure is true
+        });
+        
+
         delete userData._doc.password;
         return res.json({data:userData,message:"user account created"});
 
@@ -71,7 +78,14 @@ export const userLogin = async (req, res, next) => {
           }
 
 
-          res.cookie("token",token);
+          
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,      
+      sameSite: "Lax",    
+    });
+
+
           delete user._doc.password;
           return res.json({ data: user, token, message: "User login successful" });
         } catch (error) {
@@ -203,20 +217,24 @@ export const deactivateAccount = async (req, res) => {
       res.status(500).json({ message: "Server error", error });
   }
 };
+
 export const checkUser = async (req, res) => {
   try {
-      const { email } = req.body;
-      const user = await User.findOne({ email });
+    console.log("Checking user with ID:", req.user.id); 
 
-      if (user) {
-          res.status(200).json({ message: "Email already exists", exists: true });
-      } else {
-          res.status(200).json({ message: "Email is available", exists: false });
-      }
+    const user = await User.findById(req.user.id).select("-password");
+
+    if (!user) {
+      console.log("User not found in DB");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("User found:", user);
+
+    res.status(200).json(user);
   } catch (error) {
-      res.status(500).json({ message: "Server error", error });
+    console.log("❌ Error in checkUser:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-        
-             
+          

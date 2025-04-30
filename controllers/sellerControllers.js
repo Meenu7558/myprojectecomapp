@@ -22,7 +22,13 @@ export const sellerSignup = async (req, res, next) => {
     await sellerData.save();
 
     const token = generateToken(sellerData._id);
-    res.cookie("token", token);
+    
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // 👉 change to true in production (with HTTPS)
+      sameSite: "Lax", // or 'None' if cross-site and secure is true
+    });
+    
     delete sellerData._doc.password;
 
     return res.json({ data: sellerData, message: "Seller account created" });
@@ -51,7 +57,13 @@ export const sellerLogin = async (req, res, next) => {
     }
 
     const token = generateToken(seller._id);
-    res.cookie("token", token);
+    
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // 👉 change to true in production (with HTTPS)
+      sameSite: "Lax", // or 'None' if cross-site and secure is true
+    });
+    
     delete seller._doc.password;
 
     return res.json({ data: seller, token, message: "Seller login successful" });
